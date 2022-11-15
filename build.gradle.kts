@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "2.7.5"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
     id("nu.studer.jooq") version "8.0" // これを追加
+    id("org.flywaydb.flyway") version "8.0.1" //これも追加
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
 }
@@ -32,15 +33,16 @@ dependencies {
     testImplementation("org.testcontainers:mysql")
 
     // flyway
-    runtimeOnly("org.flywaydb:flyway-mysql")
+    implementation("org.flywaydb:flyway-mysql")
 
     // kotest
     val kotest_version = "5.5.4"
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotest_version")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.2")
 
     // jooq
     jooqGenerator("com.mysql:mysql-connector-j")
-    jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
+    jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
 }
 
 dependencyManagement {
@@ -54,6 +56,7 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
+//    dependsOn.remove("generateJooq")
 }
 
 tasks.withType<Test> {
@@ -65,7 +68,7 @@ jooq {
         create("main") {
             jooqConfiguration.apply {
                 jdbc.apply {
-                    url = "jdbc:mysql://localhost:3306/libraly?enabledTLSProtocols=TLSv1.2"
+                    url = "jdbc:mysql://localhost:3306/library?enabledTLSProtocols=TLSv1.2"
                     user = "root"
                     password = "root"
                 }
@@ -73,7 +76,7 @@ jooq {
                     name = "org.jooq.codegen.KotlinGenerator"
                     database.apply {
                         name = "org.jooq.meta.mysql.MySQLDatabase"
-                        inputSchema = System.getenv("MYSQL_DB_NAME")
+                        inputSchema = "library"
                         excludes = "flyway_schema_history"
                     }
                     generate.apply {
@@ -88,4 +91,10 @@ jooq {
             }
         }
     }
+}
+
+flyway {
+    url = "jdbc:mysql://localhost:3306/library?enabledTLSProtocols=TLSv1.2"
+    user = "root"
+    password = "root"
 }

@@ -7,7 +7,7 @@ services:
     container_name: mysql_container
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: libraly
+      MYSQL_DATABASE: library
       TZ: 'Asia/Tokyo'
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
