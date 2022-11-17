@@ -5,7 +5,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.flywaydb.core.Flyway
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.transaction.annotation.Transactional
 import org.testcontainers.containers.MySQLContainer
 
 @SpringBootTest
@@ -18,6 +17,7 @@ internal class AuthorRepositoryTest(
             .load()
             .migrate()
     }
+    afterTest { authorRepository.deleteAll() }
     test("test") {
         println("hello")
     }
@@ -25,6 +25,10 @@ internal class AuthorRepositoryTest(
         val saved = authorRepository.save("first", "last")
         val find = authorRepository.findById(saved.id)
         saved shouldBe find
+    }
+    test("find count one") {
+        authorRepository.save("first", "last")
+        authorRepository.findAll().size shouldBe 1
     }
 }) {
     companion object {

@@ -6,4 +6,5 @@ interface AuthorRepository {
     fun findById(id: Int): Author?
     fun findAll(): List<Author>
     fun save(firstName: String, lastName: String): Author
+    fun deleteAll()
 }

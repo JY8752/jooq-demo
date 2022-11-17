@@ -33,6 +33,10 @@ class AuthorRepositoryImpl(
         return Author(record.id!!, record.firstName!!, record.lastName!!)
     }
 
+    override fun deleteAll() {
+        this.dslContext.deleteFrom(AUTHOR).execute()
+    }
+
     private fun toModel(record: Record) = Author(
         record.getValue(AUTHOR.ID)!!,
         record.getValue(AUTHOR.FIRST_NAME)!!,
